@@ -1,5 +1,5 @@
 # RPG Maker MZ - VsLayeredDisplay Plugin
-Version: 1.0.0
+Version: 1.0.1
 
 1. [Dependencies](#1-dependencies)
 1. [Installation](#2-installation)
@@ -575,4 +575,4 @@ here you can look for possible conflicts with other plugins which change the sam
 ## 8. Troubleshooting
 
 ## 9. License
-VsConvertEscapeCharacters by rpgmakerwebthickness467 is marked with CC0 1.0 Universal. To view a copy of this license, visit https://creativecommons.org/publicdomain/zero/1.0/
+VsLayeredDisplay by vsrpgdev is marked with CC0 1.0 Universal. To view a copy of this license, visit https://creativecommons.org/publicdomain/zero/1.0/
