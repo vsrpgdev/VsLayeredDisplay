@@ -25,7 +25,9 @@ It supports plugin commands, scripting, and escape character commands in "Show T
 
 [![](./example.png)  \
 https://cloudd.zapto.org/examples/VsLayeredDisplay/](https://cloudd.zapto.org/examples/VsLayeredDisplay/)\
-![example video](./demo-video.mp4)
+
+https://github.com/user-attachments/assets/02fbc0c8-30c1-4eb0-b583-eb9d7cb46617
+
 
 
 # 1. Dependencies
