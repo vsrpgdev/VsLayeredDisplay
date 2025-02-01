@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.0.0 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.0.1 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -1811,7 +1811,7 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1,1, 0]}
+    get Version () {return [1,0, 1]}
 
   }
 
