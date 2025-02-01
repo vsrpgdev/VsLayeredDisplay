@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "default":{
+      "name":"defaultName", 
+      "imageFrame":{"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1}, 
+      "subImageCoordinates": [{"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1}],
+      "autoScale":"none",
+      "verticalAlign": "top",
+      "horizontalAlign": "left",
+      "clippingEnabled": false
+      },
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Name of the configuration.",
+        "default":"name"
+      },
+      "imageFrame": {
+        "type": "object",
+        "default": {"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1},
+        "description": "Image position and size (0-1).",
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "type": "number" },
+          "height": { "type": "number" },
+          "columns": { "type": "number" , "default":1},
+          "rows": { "type": "number", "default":1 }
+        },
+        "required": ["x", "y", "width", "height"]
+      },
+      "subImageCoordinates": {
+        "type": "array",
+        "default":[{"x":0, "y":0,"width":1,"height":1}],
+        "description": "Position and size of subimages (in px).",
+        "items": {
+          "type": "object",
+          "default":{"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1},
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "width": { "type": "number" },
+            "height": { "type": "number" },
+            "columns": { "type": "number" , "default":1},
+            "rows": { "type": "number", "default":1 }
+          },
+          "required": ["x", "y", "width", "height"]
+        }
+      },
+      "autoScale": {
+        "type": "string",
+        "default":"none",
+        "enum": ["fill", "contain", "cover", "x", "y", "none"],
+        "description": "Scales the image to the containing box."
+      },
+      "verticalAlign": {
+        "type": "string",
+        "default":"top",
+        "enum": ["top", "bottom", "middle"],
+        "description": "How the image should be aligned vertically inside the box."
+      },
+      "horizontalAlign": {
+        "type": "string",
+        "default":"left",
+        "enum": ["left", "right", "center"],
+        "description": "How the image should be aligned horizontally inside the box."
+      },
+      "clippingEnabled": {
+        "type": "boolean",
+        "default":false,
+        "description": "Determines whether the image should be clipped if outside of the box."
+      }
+    },
+    "required": ["name", "imageFrame", "subImageCoordinates", "autoScale", "verticalAlign", "horizontalAlign", "clippingEnabled"]
+  },
+  "default":[{
+    "name":"defaultName", 
+    "imageFrame":{"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1}, 
+    "subImageCoordinates": [{"x":0, "y":0,"width":1,"height":1, "columns":1, "rows":1}],
+    "autoScale":"none",
+    "verticalAlign": "top",
+    "horizontalAlign": "left",
+    "clippingEnabled": false
+    }]
+}

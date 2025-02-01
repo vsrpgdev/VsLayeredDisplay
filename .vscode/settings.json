@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["VsLayeredDisplayJson.json"], 
+      "url": "./data/vsLayeredDisplayConfig.schema.json" 
+    }
+  ]
+}
