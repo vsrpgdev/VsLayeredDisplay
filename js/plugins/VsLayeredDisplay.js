@@ -2135,7 +2135,7 @@
           }
           if (result[5] != undefined && result[5] !="")
           {
-            result[5] = result[5].split(":").map(v => Number(5));
+            result[5] = result[5].split(":").map(v => Number(v));
             VsLayeredDisplayInterface.SetDisplayColorTone(result[0],result[5]);
           }
           if (result[2].length > 0 && result[2][0].bitmap != undefined)
