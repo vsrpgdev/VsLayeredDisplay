@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.0.2 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.1.0 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -273,12 +273,10 @@
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * @arg y
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * 
  * @command MoveDisplay
  * @text Move display
@@ -290,13 +288,62 @@
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * @arg y
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * 
+ * 
+ * @command SubImageMove
+ * @text sub image move
+ * @arg displayId
+ * @default 0
+ * @type number
+ * @desc sprite id
+ * @arg imageId
+ * @type number
+ * @default 0
+ * @desc id of the subimage (0 is the main image used for scaling)
+ * @arg x
+ * @type number
+ * @default 0
+ * @arg y
+ * @type number
+ * @default 0
+ * 
+ * @command SubImageMoveTo
+ * @text sub image move to
+ * @arg displayId
+ * @default 0
+ * @type number
+ * @desc sprite id
+ * @arg imageId
+ * @type number
+ * @default 0
+ * @desc id of the subimage (0 is the main image used for scaling)
+ * @arg x
+ * @type number
+ * @default 0
+ * @arg y
+ * @type number
+ * @default 0
+ * 
+ * @command SubImageResize
+ * @text sub image resize
+ * @arg displayId
+ * @default 0
+ * @type number
+ * @desc sprite id
+ * @arg imageId
+ * @type number
+ * @default 0
+ * @desc id of the subimage (0 is the main image used for scaling)
+ * @arg width
+ * @type number
+ * @default 0
+ * @arg height
+ * @type number
+ * @default 0
  * 
  * @command RotateDisplay
  * @text Rotate Display
@@ -317,12 +364,10 @@
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * @arg h
  * @type number
  * @default 0
  * @decimals 6
- * @min 0
  * 
  * @command SetPivot
  * @text Set pivot point
@@ -555,7 +600,7 @@
 (() => {
 
   const pluginName = "VsLayeredDisplay";
-  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.2","VsContainer.1.1");
+  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.3","VsContainer.1.1");
 
   // @ts-ignore
   if (window.VsContainer == undefined)
@@ -831,6 +876,41 @@
     { 
       VsLayeredDisplayInterface.#_getCurrentContainer()?.MoveToDisplay(displayId,x,y); 
     }
+    
+    /**
+     * 
+     * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    static SubImageMove(displayId, imageId, x, y)
+    {
+      VsLayeredDisplayInterface.#_getCurrentContainer()?.SubImageMove(displayId,imageId,x,y); 
+    }
+    /**
+     * 
+     * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    static SubImageMoveTo(displayId, imageId, x, y)
+    {
+      VsLayeredDisplayInterface.#_getCurrentContainer()?.SubImageMoveTo(displayId, imageId,x,y); 
+    }
+    /**
+     * 
+     * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} width 
+     * @param {number} height 
+     */
+    static SubImageResize(displayId, imageId, width, height)
+    {
+      VsLayeredDisplayInterface.#_getCurrentContainer()?.SubImageResize(displayId, imageId,width,height); 
+    }
+
     /**
      * 
      * @param {number} displayId 
@@ -1152,6 +1232,58 @@
     /**
      * 
      * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    SubImageMove(displayId, imageId, x, y)
+    {
+      let found = this.Images[displayId];
+
+      if (found == undefined)
+      {
+        this.AddDisplay(displayId,null)
+      }
+      found.SubImageMove(imageId,x,y);
+    }
+    /**
+     * 
+     * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    SubImageMoveTo(displayId, imageId, x, y)
+    {
+      let found = this.Images[displayId];
+
+      if (found == undefined)
+      {
+        this.AddDisplay(displayId,null)
+      }
+      found.SubImageMoveTo(imageId,x,y);
+    }
+    /**
+     * 
+     * @param {number} displayId 
+     * @param {number} imageId 
+     * @param {number} width 
+     * @param {number} height 
+     */
+    SubImageResize(displayId, imageId, width, height)
+    {
+      let found = this.Images[displayId];
+
+      if (found == undefined)
+      {
+        this.AddDisplay(displayId,null)
+      }
+      found.SubImageResize(imageId,width,height);
+    }
+
+    /**
+     * 
+     * @param {number} displayId 
      * @param {number} x 
      * @param {number} y 
      */
@@ -1331,6 +1463,7 @@
             let coordinates  = this.#getImageCoordinates(index,rows,columns,bitmap.width,bitmap.height );
 
 
+            bitmap._paintOpacity
             this.#_bitmap.blt(bitmap,coordinates.x,coordinates.y,coordinates.width,coordinates.height,0,0,this.#_mainImageSize.width,this.#_mainImageSize.height);
             continue;
           }
@@ -1421,6 +1554,61 @@
       this.#_config.imageFrame.x = x;
       this.#_config.imageFrame.y = y;
       this.resizeChildren();
+    }
+    
+
+    /**
+     * moves the subimage to the specified position
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    SubImageMove(imageId, x, y){
+      let subImage = this.#_config.subImageCoordinates[imageId];
+      if (subImage == undefined){
+        subImage = new VsDisplayImageConfig(0,0,-1,-1);
+        this.#_config.subImageCoordinates[imageId] = subImage;
+      }
+      subImage.x += x;
+      subImage.y += y;
+
+      this.#drawBitmaps();
+    }
+
+    /**
+     * moves the subimage to the specified position
+     * @param {number} imageId 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    SubImageMoveTo(imageId, x, y){
+      let subImage = this.#_config.subImageCoordinates[imageId];
+      if (subImage == undefined){
+        subImage = new VsDisplayImageConfig(x,y,-1,-1);
+        this.#_config.subImageCoordinates[imageId] = subImage;
+      }
+      subImage.x = x;
+      subImage.y = y;
+
+      this.#drawBitmaps();
+    }
+
+    /**
+     * resizes the sub image
+     * @param {number} imageId 
+     * @param {number} width 
+     * @param {number} height 
+     */
+    SubImageResize(imageId, width, height){
+      let subImage = this.#_config.subImageCoordinates[imageId];
+      if (subImage == undefined){
+        subImage = new VsDisplayImageConfig(0,0,width,height);
+        this.#_config.subImageCoordinates[imageId] = subImage;
+      }
+      subImage.width = width;
+      subImage.height = height;
+
+      this.#drawBitmaps();
     }
 
     /**
@@ -1811,7 +1999,7 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1,0, 2]}
+    get Version () {return [1, 1, 0]}
 
   }
 
@@ -1860,14 +2048,18 @@
     window.VsLayeredDisplayJson.push(...configFromParamters);
 }
 
-  class AddDisplayArgs
+  class BaseDisplayIdArgs{
+    displayId=0
+  }
+
+  class AddDisplayArgs extends BaseDisplayIdArgs
   {
     constructor(){
+      super();
       Vs.Utils.instanceProxy(VsLayeredDisplayConfig,this,"config");
 
       this.config = new VsLayeredDisplayConfig();
     }
-    displayId = 0
     config = null
   }
   Vs.System.registerCommandTyped(pluginName, 'AddDisplay',AddDisplayArgs, args => {
@@ -1893,9 +2085,8 @@
   });
   
 
-  class AddDisplayByNameArgs
+  class AddDisplayByNameArgs extends BaseDisplayIdArgs
   {
-    displayId = 0
     configName = ""
   }
   Vs.System.registerCommandTyped(pluginName, 'AddDisplayByName',AddDisplayByNameArgs, args => {
@@ -1912,36 +2103,27 @@
     /**@type{CustomRect} */
     messagePlacement;
   }
-  PluginManager.registerCommand(pluginName, 'ChangeMessagePlacement', args => {
-    let argsObj = Vs.Utils.pluginParameterToObject(ChangeMessagePlacementArgs,args);
-    VsLayeredDisplayInterface.ChangeMessagePlacement(argsObj.messagePlacement.x,argsObj.messagePlacement.y,argsObj.messagePlacement.width,argsObj.messagePlacement.height);
+  Vs.System.registerCommandTyped(pluginName, 'ChangeMessagePlacement',ChangeMessagePlacementArgs, args => {
+    VsLayeredDisplayInterface.ChangeMessagePlacement(args.messagePlacement.x,args.messagePlacement.y,args.messagePlacement.width,args.messagePlacement.height);
   });
   
 
-  class RemoveDisplayArgs
-  {
-    displayId = 0
-  }
-  PluginManager.registerCommand(pluginName, 'RemoveDisplay', args => {
-    let argsObj = Vs.Utils.pluginParameterToObject(RemoveDisplayArgs,args);
-    VsLayeredDisplayInterface.RemoveDisplay(argsObj.displayId);
+  Vs.System.registerCommandTyped(pluginName, 'RemoveDisplay',BaseDisplayIdArgs, args => {
+    VsLayeredDisplayInterface.RemoveDisplay(args.displayId);
   });
 
 
 
-  class EnsureDisplayArgs
+  class EnsureDisplayArgs extends BaseDisplayIdArgs
   {
-    displayId = 0
     configName = ""
   }
-  PluginManager.registerCommand(pluginName, 'EnsureDisplay', args => {
-    let argsObj = Vs.Utils.pluginParameterToObject(EnsureDisplayArgs,args);
-
-    VsLayeredDisplayInterface.EnsureDisplay(argsObj.displayId,argsObj.configName);
+  Vs.System.registerCommandTyped(pluginName, 'EnsureDisplay',EnsureDisplayArgs,  args => {
+    VsLayeredDisplayInterface.EnsureDisplay(args.displayId,args.configName);
 
   });
 
-  class SetImageArgs
+  class SetImageArgs extends BaseDisplayIdArgs
   {
     displayId = 0
     configName = ""
@@ -1949,10 +2131,8 @@
     bitmap = ""
     tileIndex=0
   }
-  PluginManager.registerCommand(pluginName, 'SetImage', args => {
-    
-    let argsObj = Vs.Utils.pluginParameterToObject(SetImageArgs,args);
-    VsLayeredDisplayInterface.SetImage(argsObj.displayId,argsObj.imageId, argsObj.bitmap, argsObj.tileIndex);
+  Vs.System.registerCommandTyped(pluginName, 'SetImage',SetImageArgs, args => {
+    VsLayeredDisplayInterface.SetImage(args.displayId,args.imageId, args.bitmap, args.tileIndex);
 
   });
   PluginManager.registerCommand(pluginName, 'SetImages', args => {
@@ -1991,14 +2171,43 @@
     VsLayeredDisplayInterface.SetDisplayColorTone(someParam.displayId,[someParam.colorTone.r,someParam.colorTone.g,someParam.colorTone.b,someParam.colorTone.gray]);
   });
 
-  PluginManager.registerCommand(pluginName, 'MoveToDisplay', args => {
-    let someParam = {displayId: Vs.Utils.jsonParseRecursive(args.displayId), x: Vs.Utils.jsonParseRecursive(args.x), y: Vs.Utils.jsonParseRecursive(args.y)};
-    VsLayeredDisplayInterface.MoveToDisplay(someParam.displayId,someParam.x,someParam.y);
+  class MoveToDisplayArgs extends BaseDisplayIdArgs{
+    x=0
+    y=0
+  }
+  Vs.System.registerCommandTyped(pluginName, 'MoveToDisplay',MoveToDisplayArgs, args => {
+    VsLayeredDisplayInterface.MoveToDisplay(args.displayId,args.x,args.y);
   });
 
-  PluginManager.registerCommand(pluginName, 'MoveDisplay', args => {
-    let someParam = {displayId: Vs.Utils.jsonParseRecursive(args.displayId), x: Vs.Utils.jsonParseRecursive(args.x), y: Vs.Utils.jsonParseRecursive(args.y)};
-    VsLayeredDisplayInterface.MoveDisplay(someParam.displayId,someParam.x,someParam.y);
+  class MoveDisplayArgs extends BaseDisplayIdArgs{
+    x=0
+    y=0
+  }
+  Vs.System.registerCommandTyped(pluginName, 'MoveDisplay',MoveDisplayArgs, args => {
+    VsLayeredDisplayInterface.MoveDisplay(args.displayId,args.x,args.y);
+  });
+
+  
+  class SubImageMoveToArgs extends BaseDisplayIdArgs{
+    imageId=0
+    x=0
+    y=0
+  }
+  Vs.System.registerCommandTyped(pluginName, 'SubImageMoveTo',SubImageMoveToArgs, args => {
+    VsLayeredDisplayInterface.SubImageMoveTo(args.displayId,args.imageId, args.x,args.y);
+  });
+  
+  Vs.System.registerCommandTyped(pluginName, 'SubImageMove',SubImageMoveToArgs, args => {
+    VsLayeredDisplayInterface.SubImageMove(args.displayId,args.imageId, args.x,args.y);
+  });
+
+  class SubImageResizeArgs extends BaseDisplayIdArgs{
+    imageId=0
+    width=0
+    height=0
+  }
+  Vs.System.registerCommandTyped(pluginName, 'SubImageResize',SubImageResizeArgs, args => {
+    VsLayeredDisplayInterface.SubImageResize(args.displayId,args.imageId, args.width,args.height);
   });
 
   PluginManager.registerCommand(pluginName, 'RotateDisplay', args => {

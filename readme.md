@@ -1,5 +1,5 @@
 # RPG Maker MZ - VsLayeredDisplay Plugin
-Version: 1.0.2
+Version: 1.1.0
 
 1. [Dependencies](#1-dependencies)
 1. [Installation](#2-installation)
@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/02fbc0c8-30c1-4eb0-b583-eb9d7cb46617
 
 # 1. Dependencies
 - Plugin [vsrpgdev/VsConvertEscapeCharacters v1.2+](https://github.com/vsrpgdev/VsConvertEscapeCharacters)
-- Plugin [vsrpgdev/VsUtils v1.2+](https://github.com/vsrpgdev/VsUtils)
+- Plugin [vsrpgdev/VsUtils v1.3+](https://github.com/vsrpgdev/VsUtils)
 - Plugin [vsrpgdev/VsContainer v1.1+](https://github.com/vsrpgdev/VsContainer)
 ## 2. Installation 
 
@@ -282,7 +282,7 @@ you can use the plugin via plugin commands, show text commands or via the script
 ---
 
 ### `MoveToDisplay`
-**Description:** Moves an object to a display.
+**Description:** Moves a display to.
 - **Arguments:**
   - `displayId` (number, default: 0) - Sprite ID.
   - `x` (number, default: 0, min: 0, decimals: 6) - X coordinate.
@@ -296,6 +296,26 @@ you can use the plugin via plugin commands, show text commands or via the script
   - `displayId` (number, default: 0) - Sprite ID.
   - `x` (number, default: 0, min: 0, decimals: 6) - X coordinate.
   - `y` (number, default: 0, min: 0, decimals: 6) - Y coordinate.
+
+---
+
+### `SubImageMoveTo`
+**Description:** moves a sub image to
+  - `imageId` (number, default: 0) - sub image id
+- **Arguments:**
+  - `displayId` (number, default: 0) - Sprite ID.
+  - `x` (number, default: 0, min: 0) - X coordinate.
+  - `y` (number, default: 0, min: 0) - Y coordinate.
+
+---
+
+### `SubImageMove`
+**Description:** moves a display.
+- **Arguments:**
+  - `displayId` (number, default: 0) - Sprite ID.
+  - `imageId` (number, default: 0) - sub image id
+  - `x` (number, default: 0, min: 0) - X coordinate.
+  - `y` (number, default: 0, min: 0) - Y coordinate.
 
 ---
 
@@ -315,6 +335,18 @@ you can use the plugin via plugin commands, show text commands or via the script
   - `h` (number, default: 0, min: 0, decimals: 6) - Height.
 
 ---
+
+
+### `SubImageResize`
+**Description:** resizes a sub image
+  - `imageId` (number, default: 0) - sub image id
+- **Arguments:**
+  - `displayId` (number, default: 0) - Sprite ID.
+  - `width` (number, default: 0, min: 0) - X coordinate.
+  - `height` (number, default: 0, min: 0) - Y coordinate.
+
+---
+
 
 ### `SetPivot`
 **Description:** Sets the pivot point of a display.
