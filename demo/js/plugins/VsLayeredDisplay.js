@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.0.1 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.0.2 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -595,7 +595,7 @@
   /**
    * @type {CustomRect}
    */
-  let _changeMessagePlacement = Vs.Utils.pluginParameterToObject(CustomRect,JSON.parse(parameters["ChangeMessagePlacement"]));
+  let _changeMessagePlacement = Vs.Utils.createInstanceFromJson(CustomRect,parameters["ChangeMessagePlacement"]);
   
 //#endregion plugin configurations --------------------------------------------------------------------------
 
@@ -1811,7 +1811,7 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1,0, 1]}
+    get Version () {return [1,0, 2]}
 
   }
 
