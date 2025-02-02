@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/02fbc0c8-30c1-4eb0-b583-eb9d7cb46617
 # 1. Dependencies
 - Plugin [vsrpgdev/VsConvertEscapeCharacters v1.2+](https://github.com/vsrpgdev/VsConvertEscapeCharacters)
 - Plugin [vsrpgdev/VsUtils v1.2+](https://github.com/vsrpgdev/VsUtils)
-- Plugin [vsrpgdev/VsContainer v1.0+](https://github.com/vsrpgdev/VsContainer)
+- Plugin [vsrpgdev/VsContainer v1.1+](https://github.com/vsrpgdev/VsContainer)
 ## 2. Installation 
 
 ## 2.1. fast
