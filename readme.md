@@ -1,5 +1,5 @@
 # RPG Maker MZ - VsLayeredDisplay Plugin
-Version: 1.2.0
+Version: 1.2.1
 
 1. [Dependencies](#1-dependencies)
 1. [Installation](#2-installation)

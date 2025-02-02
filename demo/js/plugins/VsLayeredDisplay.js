@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.2.0 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.2.1 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -1479,7 +1479,7 @@
     {
       if (!this.#_bitmap)
         return;
-      this._drawBitmapTriggered =false;
+      this.#_drawBitmapTriggered =false;
       this.#_bitmap.clear();
 
       let oldSmoothing = this.#_bitmap.context.imageSmoothingEnabled;
@@ -2056,7 +2056,7 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1, 2, 0]}
+    get Version () {return [1, 2, 1]}
 
   }
 
