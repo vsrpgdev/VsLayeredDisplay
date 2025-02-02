@@ -137,6 +137,12 @@ namespace Vs
           images: { id: number; bitmap: Bitmap | string; tileIndex: number }[]
         ): void;
     
+        /**
+         * redraws bitmaps for display
+         * @param displayId
+         */
+        static DrawBitmaps(displayId: number): void;
+
         static ShowDisplay(displayId: number): void;
         static MoveToDisplay(displayId: number, x: number, y: number): void;
         
@@ -234,6 +240,12 @@ namespace Vs
         SetImages(displayId: number, images:  { id: number; bitmap: Bitmap | string; tileIndex?: number }[]): void;
 
         /**
+         * redraws bitmaps for display
+         * @param displayId
+         */
+        DrawBitmaps(displayId: number): void;
+        
+        /**
          * Shows the display for a given ID.
          * @param displayId
          */
@@ -324,6 +336,12 @@ namespace Vs
         get Flipped(): boolean;
         set Flipped(value: boolean);
       
+        /**
+         * redraws bitmaps
+         * @param displayId
+         */
+        DrawBitmaps(): void;
+
         MoveToDisplay(x: number, y: number): void;
 
         SubImageMove(imageId: number, x: number, y: number): void;

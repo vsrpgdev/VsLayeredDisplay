@@ -1,5 +1,5 @@
 # RPG Maker MZ - VsLayeredDisplay Plugin
-Version: 1.1.0
+Version: 1.2.0
 
 1. [Dependencies](#1-dependencies)
 1. [Installation](#2-installation)
@@ -75,6 +75,19 @@ and [.vscode/settings.json](.vscode/settings.json) int your root/.vscode/setting
 
   this sets the default scaling beheaviour for your displays (this value can be overwritten in a per display basis). 
 ---
+- ### draw bitmaps in update
+  > ### **boolean**
+  > | Value | Description |
+  > | -- | -- |
+  > | false | bitmaps gets redrawn as soon as a value changes |
+  > | true | bitmaps gets redrawn the next time update is called |
+  > default: **false**
+
+  this value controlles when bitmaps get redrawn. if you want the fastest response set to true.
+  if you often change multiple values in one step set to false to prevent not needed redraws.
+---
+
+
 
 - ### Enable usage in Messages
   > ### **boolean**
@@ -232,6 +245,13 @@ you can use the plugin via plugin commands, show text commands or via the script
   - `flipped` (boolean, default: false) - Whether to flip the image.
   - `opacity` (number, default: 255, min: 0, max: 255) - Opacity level.
   - `colorTone` (struct<ColorTone>, default: {"r":0,"g":0,"b":0,"gray":0}) - Color tone configuration.
+
+---
+
+### `DrawBitmaps`
+**Description:** redraws the bitmaps for a display
+- **Arguments:**
+  - `displayId` (number, default: 0) - Sprite ID (0 - infinity).
 
 ---
 
@@ -398,6 +418,14 @@ paramters ar marked with <>, [] arguments are optional
 
 ---
 
+### `\B[D<display-id>]` - [remove display](#drawbitmaps)
+**Description:** redraws the bitmaps for a display
+- **Arguments:**
+  - `<display-id>` id of the display
+- **examples:**
+  `\B[D0]` `\B[D1]` `\B[D2]`
+
+---
 ### `\B[<display-id>,<display-visible>]` - [hide display](#hidedisplay) or [show display](#showdisplay)
 **Description:** sets visibility of a display
 - **Arguments:**

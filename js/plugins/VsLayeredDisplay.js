@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.1.0 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.2.0 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -52,6 +52,14 @@
  * @type boolean
  * @desc switches between (false - nearest neighbor and / true - linear) -scaling
  * @default false
+ * 
+ * @param DrawInUpdate
+ * @text draw bitmaps in update
+ * @type boolean
+ * @desc should the drawing of the bitmaps happen in the update method or directly on changing values
+ * if set to true, the bitmaps get redrawn when changes occured in the next update cycle.
+ * if set to false, every chage triggers a redrawn of the bitmap, if you set x,y and size in 3 steps. 3 redraws happen
+ * @default true
  * 
  * @param EnableMessageUse
  * @text Enable usage in Messages
@@ -128,7 +136,7 @@
  * 
  * @command ChangeMessagePlacement
  * @text change message placement
- * @help changes the position and size of the message window (0 - 1), set to -1 to dont change a value
+ * @desc changes the position and size of the message window (0 - 1), set to -1 to dont change a value
  * example ChangeMessagePlacement(0.2,-1,0,8,-1) to only change x and width
  * @arg messagePlacement
  * @text message placement
@@ -208,6 +216,14 @@
  * @type struct<ColorTone>
  * @desc color tone
  * @default {"r":0,"g":0,"b:0","gray":0}
+ * 
+ * @command DrawBitmaps
+ * @text draw bitmaps
+ * @desc forces a redraw of the bitmaps
+ * @arg displayId
+ * @default 0
+ * @type number
+ * @desc sprite id from 0 - infinity
  * 
  * @command ShowDisplay
  * @text show display
@@ -637,6 +653,9 @@
   const AutoCreateInSceneBase = (parameters["AutoCreateInSceneBase"] || "true") != "false";
   const AutoCreateInWindowMessage = (parameters["AutoCreateInWindowMessage"] || "true") != "false";
 
+  const drawInUpdate = (parameters["DrawInUpdate"] || "true") != "false";
+  
+
   /**
    * @type {CustomRect}
    */
@@ -859,6 +878,12 @@
     {
       VsLayeredDisplayInterface.#_getCurrentContainer()?.SetImages(displayId,images);
     }
+
+    /**
+     * 
+     * @param {number} displayId 
+     */
+    static DrawBitmaps(displayId) { VsLayeredDisplayInterface.#_getCurrentContainer()?.DrawBitmaps(displayId); }
 
     /**
      * 
@@ -1142,6 +1167,19 @@
       found.ShowImages(images);
     }
 
+    DrawBitmaps(displayId)
+    {
+      let found = this.Images[displayId];
+
+      if (found == undefined)
+      {
+        return;
+      }
+      found = this.Images[displayId];
+
+      found.DrawBitmaps();
+    }
+
     ShowDisplay(displayId)
     {
       let found = this.Images[displayId];
@@ -1385,7 +1423,7 @@
       if (!this.#_bitmap) return;
       this.#_bitmap.smooth = this.#_imageSmoothingEnabled;
 
-      this.#drawBitmaps();
+      this.#requestDrawBitmaps();
     }
 
     /**
@@ -1441,7 +1479,7 @@
     {
       if (!this.#_bitmap)
         return;
-
+      this._drawBitmapTriggered =false;
       this.#_bitmap.clear();
 
       let oldSmoothing = this.#_bitmap.context.imageSmoothingEnabled;
@@ -1462,8 +1500,6 @@
             let index = this.#_subBitmapIndex[i] ?? 0;
             let coordinates  = this.#getImageCoordinates(index,rows,columns,bitmap.width,bitmap.height );
 
-
-            bitmap._paintOpacity
             this.#_bitmap.blt(bitmap,coordinates.x,coordinates.y,coordinates.width,coordinates.height,0,0,this.#_mainImageSize.width,this.#_mainImageSize.height);
             continue;
           }
@@ -1485,6 +1521,19 @@
       {
         this.#_bitmap.context.imageSmoothingEnabled = this.#_bitmap.context.imageSmoothingEnabled;
       }
+    }
+
+    #_drawBitmapTriggered = false;
+    #requestDrawBitmaps()
+    {
+      if (drawInUpdate)
+        this.#_drawBitmapTriggered =true
+      else
+        this.#drawBitmaps();
+    }
+
+    DrawBitmaps(){
+      this.#drawBitmaps();
     }
 
     /**@type {Bitmap|undefined} */
@@ -1572,7 +1621,7 @@
       subImage.x += x;
       subImage.y += y;
 
-      this.#drawBitmaps();
+      this.#requestDrawBitmaps();
     }
 
     /**
@@ -1590,7 +1639,7 @@
       subImage.x = x;
       subImage.y = y;
 
-      this.#drawBitmaps();
+      this.#requestDrawBitmaps();
     }
 
     /**
@@ -1608,7 +1657,7 @@
       subImage.width = width;
       subImage.height = height;
 
-      this.#drawBitmaps();
+      this.#requestDrawBitmaps();
     }
 
     /**
@@ -1731,7 +1780,7 @@
       if (this.#_subBitmap[id] == bitmap) 
       {
         if (indexChanged)
-          this.#drawBitmaps();
+          this.#requestDrawBitmaps();
         return;
       }
 
@@ -1742,7 +1791,7 @@
         if (bitmap == null)
         {
           this.#_subBitmap[id] = undefined;
-          this.#drawBitmaps();
+          this.#requestDrawBitmaps();
           return;
         }
         // @ts-ignore
@@ -1750,14 +1799,14 @@
         // @ts-ignore
         if (bitmap.width > 0)
         {
-          this.#drawBitmaps();
+          this.#requestDrawBitmaps();
         }
         else
         {
           // @ts-ignore
           bitmap.addLoadListener((b)=>{
             if (this.#_destroyed) return;
-            this.#drawBitmaps();
+            this.#requestDrawBitmaps();
           });
         }
         return;
@@ -1765,7 +1814,7 @@
       if (bitmap == null)
       {
         this.#_subBitmap[0] = undefined;
-        this.#drawBitmaps();
+        this.#requestDrawBitmaps();
         return;
       }
       // @ts-ignore
@@ -1791,6 +1840,14 @@
       }
     }
 
+
+    update()
+    {
+      if (this.#_drawBitmapTriggered)
+        this.#drawBitmaps();
+      super.update();
+    }
+
     /**
      * 
      * @param {Bitmap} bitmap 
@@ -1806,7 +1863,7 @@
         this.#_subBitmap[0] = bitmap;
         this.resizeChildren();
       }
-      this.#drawBitmaps();
+      this.#requestDrawBitmaps();
     }
 
     /**@type {Sprite} */
@@ -1999,7 +2056,7 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1, 1, 0]}
+    get Version () {return [1, 2, 0]}
 
   }
 
@@ -2146,6 +2203,11 @@
     VsLayeredDisplayInterface.SetImagesEx(someParam.displayId,someParam.configName,  someParam.images,someParam.flipped,someParam.opacity, someParam.colorTone);
 
   });
+  PluginManager.registerCommand(pluginName, 'DrawBitmaps', args => {
+    let someParam = {displayId :Vs.Utils.jsonParseRecursive(args.displayId)};
+    VsLayeredDisplayInterface.DrawBitmaps(someParam.displayId);
+  });
+
   PluginManager.registerCommand(pluginName, 'ShowDisplay', args => {
     let someParam = {displayId :Vs.Utils.jsonParseRecursive(args.displayId)};
     VsLayeredDisplayInterface.ShowDisplay(someParam.displayId);
@@ -2271,6 +2333,11 @@
           else if (result[0][0] == '+')
           {
             VsLayeredDisplayInterface.ShowDisplay(Number(result[0].substring(1)));
+            return
+          }
+          else if (result[0][0] == 'D')
+          {
+            VsLayeredDisplayInterface.DrawBitmaps(Number(result[0].substring(1)));
             return
           }
           VsLayeredDisplayInterface.SelectContainerSource(result[0]);
@@ -2497,7 +2564,6 @@
 if (Vs.isVsRpgDev)
   {
     Vs.plugins.VsLayeredDisplay = VsLayeredDisplay;
-
   }
   else
   {
