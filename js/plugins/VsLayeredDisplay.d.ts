@@ -139,6 +139,12 @@ namespace Vs
     
         static ShowDisplay(displayId: number): void;
         static MoveToDisplay(displayId: number, x: number, y: number): void;
+        
+
+        static SubImageMove(displayId: number, imageId: number, x: number, y: number): void;
+        static SubImageMoveTo(displayId: number, imageId: number, x: number, y: number): void;
+        static SubImageResize(displayId: number, imageId: number, width: number, height: number): void;
+
         static SetPivot(displayId: number, x: number, y: number): void;
         static ResizeDisplay(displayId: number, w: number, h: number): void;
         static HideDisplay(displayId: number): void;
@@ -267,6 +273,10 @@ namespace Vs
          */
         MoveToDisplay(displayId: number, x: number, y: number): void;
 
+        SubImageMove(displayId: number, imageId: number, x: number, y: number): void;
+        SubImageMoveTo(displayId: number, imageId: number, x: number, y: number): void;
+        SubImageResize(displayId: number, imageId: number, width: number, height: number): void;
+
         /**
          * Sets the pivot point for a display.
          * @param displayId
@@ -315,6 +325,11 @@ namespace Vs
         set Flipped(value: boolean);
       
         MoveToDisplay(x: number, y: number): void;
+
+        SubImageMove(imageId: number, x: number, y: number): void;
+        SubImageMoveTo(imageId: number, x: number, y: number): void;
+        SubImageResize(imageId: number, width: number, height: number): void;
+
         SetPivot(x: number, y: number): void;
         ResizeDisplay(width: number, height: number): void;
       
