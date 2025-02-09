@@ -16,3 +16,6 @@ demo/js/rmmz_*
 !demo/img/pictures/
 demo/js/main.js
 demo/package.json
+demo/save/config.rmmzsave
+demo/save/file0.rmmzsave
+demo/save/global.rmmzsave

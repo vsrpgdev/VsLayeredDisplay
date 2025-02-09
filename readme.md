@@ -1,5 +1,5 @@
 # RPG Maker MZ - VsLayeredDisplay Plugin
-Version: 1.2.1
+Version: 1.3.0
 
 1. [Dependencies](#1-dependencies)
 1. [Installation](#2-installation)
@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/02fbc0c8-30c1-4eb0-b583-eb9d7cb46617
 
 # 1. Dependencies
 - Plugin [vsrpgdev/VsConvertEscapeCharacters v1.2+](https://github.com/vsrpgdev/VsConvertEscapeCharacters)
-- Plugin [vsrpgdev/VsUtils v1.3+](https://github.com/vsrpgdev/VsUtils)
+- Plugin [vsrpgdev/VsUtils v1.5+](https://github.com/vsrpgdev/VsUtils)
 - Plugin [vsrpgdev/VsContainer v1.1+](https://github.com/vsrpgdev/VsContainer)
 ## 2. Installation 
 

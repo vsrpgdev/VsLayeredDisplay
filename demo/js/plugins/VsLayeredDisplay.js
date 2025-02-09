@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.2.1 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.3.0 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -616,7 +616,7 @@
 (() => {
 
   const pluginName = "VsLayeredDisplay";
-  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.3","VsContainer.1.1");
+  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.5","VsContainer.1.1");
 
   // @ts-ignore
   if (window.VsContainer == undefined)
@@ -1765,17 +1765,15 @@
       if (id < 0) throw new Error("image id is below 0");
 
       let indexChanged = false;
-      if (index)
+
+      if (index == undefined)
+        index = 0;
+
+      if (this.#_subBitmapIndex[id] != index)
       {
         this.#_subBitmapIndex[id] = index;
         indexChanged=true;
       }
-      else
-      {
-        this.#_subBitmapIndex[id] = 0;
-        indexChanged=true;
-      }
-
 
       if (this.#_subBitmap[id] == bitmap) 
       {
@@ -1808,6 +1806,10 @@
             if (this.#_destroyed) return;
             this.#requestDrawBitmaps();
           });
+          // @ts-ignore
+          bitmap.addErrorListener((b)=>{
+            Graphics.printError("Failed to load:",b.url);
+          });
         }
         return;
       }
@@ -1836,6 +1838,10 @@
           console.debug("VsLayeredDisplayContainer::ShowImageInternal:addLoadListener["+this.#_id+"](id: "+id+", id: "+(bitmap.url ?? bitmap)+") addLoadListener ("+bitmap.width+"x"+bitmap.height+")");
           
           this.#mainBitmapUpdated(b);
+        });
+        // @ts-ignore
+        bitmap.addErrorListener((b)=>{
+          Graphics.printError("Failed to load:",b.url);
         });
       }
     }
@@ -1871,6 +1877,17 @@
 
     
     #_mask = new PIXI.Graphics();
+
+
+    hide(){
+      this.emit("hide");
+      super.hide();
+    }
+    show(){
+      super.show();
+      this.emit("show");
+    }
+
     /**
      * Removes all internal references and listeners as well as removes children from the display list.
      * Do not use a Container after calling `destroy`.
@@ -1898,6 +1915,8 @@
       if (!options)
         options = { children: true, texture: true };
 
+      this.emit("destroy");
+      this.removeAllListeners();
       super.destroy(options);
     }
 
@@ -2044,6 +2063,17 @@
     /**@type {VsLayeredDisplayConfig}  */
     #_config;
     
+    
+    /**
+     * 
+     * @param {string} key 
+     * @param {*} callback 
+     * @param {any} [context]
+     */
+    addEventListener(key, callback, context)
+    {
+      return this.on(key,callback,context);
+    }
   }
 
   let VsLayeredDisplay = {

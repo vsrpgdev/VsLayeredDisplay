@@ -105,6 +105,13 @@ namespace Vs
         constructor();
       }
       
+      declare interface VsLayeredDisplayInterfaceEventsMap {
+        "destroy":void,
+        "show":void,
+        "hide":void
+      }
+
+
       declare class VsLayeredDisplayInterface 
       {
         /**
@@ -367,7 +374,11 @@ namespace Vs
         /**returns the rotation in degrees  */
         readonly rotationDeg : number;
 
+        addEventListener(type: string, listener: (any) => any, context?:any): void;
+        addEventListener<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): void;
 
+        on(type: string, listener: (any) => any, context?:any): void;
+        on<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): void;
       }
     }
   }
