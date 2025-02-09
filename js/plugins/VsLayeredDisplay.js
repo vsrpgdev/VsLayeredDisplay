@@ -2086,7 +2086,9 @@
 
 
     get PluginName () {return pluginName},
-    get Version () {return [1, 2, 1]}
+
+    /**@type {[number,number,number]} */
+    get Version () {return [1, 3, 0]}
 
   }
 

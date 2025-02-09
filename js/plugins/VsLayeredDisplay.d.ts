@@ -9,6 +9,15 @@ namespace Vs
     declare namespace VsLayeredDisplay
     {
       /**
+       * gets the plugin name
+       */
+      const PluginName: string;
+
+      /**
+       * gets the version in major, minor, patch
+       */
+      const Version : [number,number,number];
+      /**
        * image configuration for main and subimages
        */
       declare class VsDisplayImageConfig {
