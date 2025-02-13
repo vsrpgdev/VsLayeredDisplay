@@ -132,6 +132,9 @@ namespace Vs
          */
         static ChangeMessagePlacement(x:number,y:number,width:number,height:number): void;
         static SelectContainerSource(source: 0|1|2): void;
+
+        static get SelectedContainerSource():number;
+
         static RemoveDisplay(displayId: number): void;
         static ClearDisplays() : void;
         static AddDisplay(displayId: number, config: VsLayeredDisplayConfig | string): void;
@@ -161,6 +164,7 @@ namespace Vs
 
         static ShowDisplay(displayId: number): void;
         static MoveToDisplay(displayId: number, x: number, y: number): void;
+        static MoveDisplay(displayId: number, x: number, y: number): void;
         
 
         static SubImageMove(displayId: number, imageId: number, x: number, y: number): void;
@@ -300,6 +304,14 @@ namespace Vs
          * @param y
          */
         MoveToDisplay(displayId: number, x: number, y: number): void;
+        
+        /**
+         * Moves the display 
+         * @param displayId
+         * @param x
+         * @param y
+         */
+        MoveDisplay(displayId: number, x: number, y: number): void;
 
         SubImageMove(displayId: number, imageId: number, x: number, y: number): void;
         SubImageMoveTo(displayId: number, imageId: number, x: number, y: number): void;
@@ -360,6 +372,14 @@ namespace Vs
 
         MoveToDisplay(x: number, y: number): void;
 
+        /**
+         * Moves the display 
+         * @param displayId
+         * @param x
+         * @param y
+         */
+        MoveDisplay(x: number, y: number): void;
+
         SubImageMove(imageId: number, x: number, y: number): void;
         SubImageMoveTo(imageId: number, x: number, y: number): void;
         SubImageResize(imageId: number, width: number, height: number): void;
@@ -369,6 +389,8 @@ namespace Vs
       
         ShowImage(id: number, bitmap: Bitmap | string, index?: number): void;
         ShowImages(images: { id: number; tileIndex: number; bitmap: Bitmap | string }[]): void;
+
+        GetBitmapAndIndexForPosition(pos:number): {bitmap:Bitmap|undefined, tileIndex:number}|null;
       
         destroy(options?: { children?: boolean; texture?: boolean; baseTexture?: boolean }): void;
       
@@ -383,11 +405,11 @@ namespace Vs
         /**returns the rotation in degrees  */
         readonly rotationDeg : number;
 
-        addEventListener(type: string, listener: (any) => any, context?:any): void;
-        addEventListener<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): void;
+        addEventListener(type: string, listener: (any) => any, context?:any): VsLayeredDisplay;
+        addEventListener<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): VsLayeredDisplay;
 
-        on(type: string, listener: (any) => any, context?:any): void;
-        on<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): void;
+        on(type: string, listener: (any) => any, context?:any): VsLayeredDisplay;
+        on<K extends keyof VsLayeredDisplayInterfaceEventsMap>(type: K, listener: (this: VsAnimator, ev: VsLayeredDisplayInterfaceEventsMap[K]) => any, context?:any): VsLayeredDisplay;
       }
     }
   }

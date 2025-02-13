@@ -1,7 +1,7 @@
 // #region RPG Maker MZ --------------------------------------------------------------------------
 /*:
  * @target MZ
- * @plugindesc Version 1.3.0 plugin to display avatar pictures with changable elements (face, etc)
+ * @plugindesc Version 1.4.0 plugin to display avatar pictures with changable elements (face, etc)
  * @author VsRpgDev
  * @url https://github.com/vsrpgdev/VsLayeredDisplay
  * @orderAfter VsContainer
@@ -616,7 +616,7 @@
 (() => {
 
   const pluginName = "VsLayeredDisplay";
-  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.5","VsContainer.1.1");
+  Vs.c(pluginName,"VsConvertEscapeCharacters.1.2","VsUtils.1.6","VsContainer.1.1");
 
   // @ts-ignore
   if (window.VsContainer == undefined)
@@ -797,6 +797,10 @@
     {
       // @ts-ignore
       _selectedContainerSource = Math.max(Math.min(source,2),0);
+    }
+
+    static get SelectedContainerSource(){
+      return _selectedContainerSource;
     }
     
     /** removes the image with displayId 
@@ -1428,13 +1432,14 @@
 
     /**
      * init main container, creates bitmap
-     * @param {Bitmap} bitmap 
+     * @param {number} width 
+     * @param {height} width 
      */
-    #initMainContainer(bitmap)
+    #initMainContainer(width,height)
     {
-      if (bitmap == undefined) return;
+      //if (bitmap == undefined) return;
 
-      if (this.#_bitmap && this.#_bitmap.width != bitmap.width && this.#_bitmap.height != bitmap.height)
+      if (this.#_bitmap && this.#_bitmap.width != width && this.#_bitmap.height != height)
       {
           this.#_bitmap.destroy();
           this.#_bitmap = undefined;
@@ -1442,7 +1447,7 @@
 
       if (!this.#_bitmap)
       {
-        this.#_bitmap = new Bitmap(bitmap.width,bitmap.height);
+        this.#_bitmap = new Bitmap(width,height);
         this.#_bitmap.smooth = this.#_imageSmoothingEnabled;
 
         this.#_childSprite.bitmap = this.#_bitmap;
@@ -1550,6 +1555,17 @@
     /**@type {(Bitmap|undefined)[]} */
     #_subBitmap = [];
 
+    
+    /**
+     * 
+     * @param {number} pos 
+     * @returns 
+     */
+    GetBitmapAndIndexForPosition(pos)
+    {
+      return this.#_subBitmap[pos] ? {bitmap:this.#_subBitmap[pos], tileIndex:this.#_subBitmapIndex[pos]??0} : null;
+    }
+
     /**@type {(number|undefined)[]} */
     #_subBitmapIndex = [];
 
@@ -1602,9 +1618,24 @@
     {
       this.#_config.imageFrame.x = x;
       this.#_config.imageFrame.y = y;
-      this.resizeChildren();
+      //this.resizeChildren();
+      
+      this.x = this.#_config.imageFrame.x * Graphics.width;
+      this.y = this.#_config.imageFrame.y * Graphics.height;
     }
     
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    MoveDisplay(x,y)
+    {
+      this.#_config.imageFrame.x += x;
+      this.#_config.imageFrame.y += y;
+      this.x = this.#_config.imageFrame.x * Graphics.width;
+      this.y = this.#_config.imageFrame.y * Graphics.height;
+    }
 
     /**
      * moves the subimage to the specified position
@@ -1660,17 +1691,6 @@
       this.#requestDrawBitmaps();
     }
 
-    /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     */
-    MoveDisplay(x,y)
-    {
-      this.#_config.imageFrame.x += x;
-      this.#_config.imageFrame.y += y;
-      this.resizeChildren();
-    }
     
     
     /**
@@ -1738,29 +1758,47 @@
     /**
      * 
      * @param {number} id 
-     * @param {Bitmap|string} bitmap 
+     * @param {Bitmap|string} bitmapOrString 
      * @param {number} [index] index of the grid
      */
-    #ShowImageInternal(id, bitmap, index)
+    #ShowImageInternal(id, bitmapOrString, index)
     {
+      /**@type {Bitmap|undefined} */
+      let bitmap = undefined;
       if (!this.visible) this.show();
-      if (typeof(bitmap) == "string")
+      if (typeof(bitmapOrString) == "string")
       {
-        if (bitmap == "")
+        if (bitmapOrString == "")
         {
           bitmap=undefined;
         }
         else
         {
-          bitmap = VsConvertEscapeCharacters.convertEscapeCharacters(bitmap) ?? bitmap;
+          if (bitmapOrString.startsWith("!") && bitmapOrString.includes("x"))
+          {
+            let parts = bitmapOrString.substring(1).split("x");
+            
+            if (parts.length == 2)
+            {
+              let numbers = parts.map(n => Number(n));
 
-          // @ts-ignore
-          bitmap  = ImageManager.loadPicture(bitmap);
+              if (!numbers.some(n => isNaN(n)))
+              {
+                this.#mainBitmapUpdated(null,numbers[0],numbers[1]);
+                return;
+              }
+            }
+          }
+          bitmapOrString = VsConvertEscapeCharacters.convertEscapeCharacters(bitmapOrString) ?? bitmapOrString;
+
+          bitmap  = ImageManager.loadPicture(bitmapOrString);
         }
       }
+      else
+        bitmap = bitmapOrString;
 
       // @ts-ignore
-      console.debug("VsLayeredDisplayContainer::ShowImageInternal["+this.#_id+"](id: "+id+", id: "+(bitmap?.url ?? bitmap)+")");
+      console.debug("VsLayeredDisplayContainer::ShowImageInternal["+this.#_id+"](id: "+id+", id: "+(bitmap?.url ?? "undefined")+")");
 
       if (id < 0) throw new Error("image id is below 0");
 
@@ -1792,54 +1830,50 @@
           this.#requestDrawBitmaps();
           return;
         }
-        // @ts-ignore
         this.#_subBitmap[id] = bitmap;
-        // @ts-ignore
+
         if (bitmap.width > 0)
         {
           this.#requestDrawBitmaps();
         }
         else
         {
-          // @ts-ignore
           bitmap.addLoadListener((b)=>{
             if (this.#_destroyed) return;
             this.#requestDrawBitmaps();
           });
-          // @ts-ignore
+
           bitmap.addErrorListener((b)=>{
             Graphics.printError("Failed to load:",b.url);
           });
         }
         return;
       }
-      if (bitmap == null)
+      if (bitmap == undefined)
       {
         this.#_subBitmap[0] = undefined;
         this.#requestDrawBitmaps();
         return;
       }
-      // @ts-ignore
-      if (bitmap.width > 0)
+
+      if (bitmap.isError())
+        Graphics.printError("Failed to load:",bitmap.url);
+      
+      if (bitmap.isReady())
       {
-        // @ts-ignore
         console.debug("VsLayeredDisplayContainer::ShowImageInternal["+this.#_id+"](id: "+id+", id: "+(bitmap?.url ?? bitmap)+") bitmap already loaded ("+bitmap.width+"x"+bitmap.height+")");
-        
-        // @ts-ignore
-        this.#mainBitmapUpdated(bitmap);
+        this.#mainBitmapUpdated(bitmap,bitmap.width,bitmap.height);
       }
       else
       {
         
-        // @ts-ignore
         bitmap.addLoadListener((b) => {
           if (this.#_destroyed) return;
-          // @ts-ignore
+
           console.debug("VsLayeredDisplayContainer::ShowImageInternal:addLoadListener["+this.#_id+"](id: "+id+", id: "+(bitmap.url ?? bitmap)+") addLoadListener ("+bitmap.width+"x"+bitmap.height+")");
           
-          this.#mainBitmapUpdated(b);
+          this.#mainBitmapUpdated(b,b.width,b.height);
         });
-        // @ts-ignore
         bitmap.addErrorListener((b)=>{
           Graphics.printError("Failed to load:",b.url);
         });
@@ -1856,19 +1890,19 @@
 
     /**
      * 
-     * @param {Bitmap} bitmap 
+     * @param {Bitmap|undefined} bitmap 
+     * @param {number} width 
+     * @param {number} height 
      */
-    #mainBitmapUpdated(bitmap)
+    #mainBitmapUpdated(bitmap,width,height)
     {
-      if (bitmap)
-      {
-        this.#_mainImageSize.width = bitmap.width / (this.Config?.imageFrame?.columns ?? 1);
-        this.#_mainImageSize.height = bitmap.height / (this.Config?.imageFrame?.rows ?? 1);
-        
-        this.#initMainContainer(bitmap);
-        this.#_subBitmap[0] = bitmap;
-        this.resizeChildren();
-      }
+      this.#_mainImageSize.width = width / (this.Config?.imageFrame?.columns ?? 1);
+      this.#_mainImageSize.height = height / (this.Config?.imageFrame?.rows ?? 1);
+      
+      this.#initMainContainer(width,height);
+      this.#_subBitmap[0] = bitmap;
+      this.resizeChildren();
+      
       this.#requestDrawBitmaps();
     }
 
@@ -2000,9 +2034,6 @@
      */
     resizeChildren()
     {
-      
-      console.debug(`VsLayeredDisplayContainer::resizeChildren[${this.#_id}]()`);
-
       let targetWidth = 0;
       let targetHeight = 0;
       if (this.#_config.imageFrame.width > 0)
@@ -2088,7 +2119,7 @@
     get PluginName () {return pluginName},
 
     /**@type {[number,number,number]} */
-    get Version () {return [1, 3, 0]}
+    get Version () {return [1, 4, 0]}
 
   }
 
